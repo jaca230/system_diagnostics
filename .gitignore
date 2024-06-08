@@ -1,0 +1,96 @@
+# Ignore macOS specific files
+.DS_Store
+
+# Ignore Windows specific files
+Thumbs.db
+Desktop.ini
+
+# Ignore Linux specific files
+*~
+
+# Ignore compiled object files
+*.o
+*.obj
+
+# Ignore compiled dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Ignore compiled static libraries
+*.a
+*.lib
+
+# Ignore executable files
+*.exe
+*.out
+*.app
+
+# Ignore build directories
+bin/
+build/
+
+# Ignore dependency directories
+node_modules/
+vendor/
+
+# Ignore Python specific files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Ignore virtual environment directories
+venv/
+env/
+ENV/
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userossc
+*.sln
+*.sw?
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+tmp/
+temp/
+*.tmp
+
+# Ignore backup files
+*.bak
+*.old
+
+# Ignore generated documentation
+docs/
+
+# Ignore coverage reports
+coverage/
+*.lcov
+
+# Ignore database files
+*.sqlite
+*.db
+
+# Ignore compressed files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Ignore other unnecessary files
+*.iml
+*.class
+*.jar
+*.war
+*.ear
+*.class
+*.classpath
+*.project
+*.settings/

@@ -1,0 +1,14 @@
+{
+    "debug": {
+        "verbosity": 1
+    },
+    "printing": {
+        "print_line_number": true,
+        "print_current_time": true,
+        "prefix": "system_monitor",
+        "suffix": "",
+        "info_color": "white",
+        "warning_color": "yellow",
+        "error_color": "red"
+    }
+}
