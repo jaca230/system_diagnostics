@@ -62,22 +62,34 @@ int main(int argc, char* argv[]) {
 
     for (int i = 0; i < iterations; ++i) {
         printer.print("-------------------------------");
-        printer.print("Iteration #" + std::to_string(i));
+        printer.print("Iteration #" + std::to_string(i+1));
         printer.print("-------------------------------");
         // Update CPU information
         SystemInfo.updateSystemInfo();
 
         // Get total RAM, free RAM, and CPU usage percentage
+        long total_ram = SystemInfo.getTotalRam();
+        long free_ram = SystemInfo.getFreeRam();
         long total_ram_MB = SystemInfo.getTotalRamMB();
         long free_ram_MB = SystemInfo.getFreeRamMB();
         double cpu_usage_percent = SystemInfo.getCpuUsage();
         int cpu_num_processors = SystemInfo.getNumCores();
+        double cpu_real_time_step = SystemInfo.getTimeStep();
 
         // Print total RAM, free RAM, and CPU usage
-        printer.print("Total RAM: " + std::to_string(total_ram_MB) + " MB");
-        printer.print("Free RAM: " + std::to_string(free_ram_MB) + " MB");
+        printer.print("Total RAM: " + std::to_string(total_ram) + " B");
+        printer.print("Free RAM: " + std::to_string(free_ram) + " B");
+        printer.print("Total RAM (MB): " + std::to_string(total_ram_MB) + " MB");
+        printer.print("Free RAM (MB): " + std::to_string(free_ram_MB) + " MB");
         printer.print("Total CPU Usage: " + std::to_string(cpu_usage_percent) + "%");
+        printer.print("Time step for CPU Usage: " + std::to_string(cpu_real_time_step) + "s");
         printer.print("Number of CPU Proccessors: " + std::to_string(cpu_num_processors));
+        for (int core = 0; core < cpu_num_processors; ++core) {
+            double cpu_usage_percent_core = SystemInfo.getCpuUsageForCore(core);
+            double cpu_real_time_step_core = SystemInfo.getTimeStepForCore(core);
+            printer.print("CPU Core " + std::to_string(core) + " Usage: " + std::to_string(cpu_usage_percent_core) + "%");
+            printer.print("CPU Core " + std::to_string(core) + " Time step: " + std::to_string(cpu_real_time_step_core) + "s");
+        }
 
         // Print load averages for 1 min, 5 min, and 15 min
         std::string load_avg_msg = "Load Average (1 min, 5 min, 15 min): ";

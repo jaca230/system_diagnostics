@@ -1,8 +1,8 @@
 {
     "debug": {
-        "verbosity": 1
+        "verbosity": 4
     },
-    "printing": {
+    "printer": {
         "print_line_number": true,
         "print_current_time": true,
         "prefix": "system_monitor",
@@ -10,5 +10,11 @@
         "info_color": "white",
         "warning_color": "yellow",
         "error_color": "red"
+    },
+    "cpu_usage_calculator": {
+        "buffer_size": 10000
+    },
+    "system_info": {
+        "cpu_usage_time_average_ms": 10000
     }
 }

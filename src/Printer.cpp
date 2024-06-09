@@ -18,17 +18,16 @@ void Printer::initializeSettings() {
     // Get configuration from the ConfigManager
     const nlohmann::json& config = ConfigManager::getInstance().getConfig();
     verbosity = ConfigManager::getInstance().getVerbosity();
-
     // Extract other printing settings
-    if (config.contains("printing")) {
-        const nlohmann::json& printingConfig = config["printing"];
-        printLineNumber = printingConfig.value("print_line_number", false);
-        printCurrentTime = printingConfig.value("print_current_time", false);
-        prefix = printingConfig.value("prefix", "");
-        suffix = printingConfig.value("suffix", "");
-        infoColor = printingConfig.value("info_color", "white");
-        warningColor = printingConfig.value("warning_color", "yellow");
-        errorColor = printingConfig.value("error_color", "red");
+    if (config.contains("printer")) {
+        const nlohmann::json& printerConfig = config["printer"];
+        printLineNumber = printerConfig.value("print_line_number", false);
+        printCurrentTime = printerConfig.value("print_current_time", false);
+        prefix = printerConfig.value("prefix", "");
+        suffix = printerConfig.value("suffix", "");
+        infoColor = printerConfig.value("info_color", "white");
+        warningColor = printerConfig.value("warning_color", "yellow");
+        errorColor = printerConfig.value("error_color", "red");
     } else {
         // Use default values if the printing section is not found
         printLineNumber = false;

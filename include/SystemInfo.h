@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include "CpuUsageCalculator.h"
 
 class SystemInfo {
 public:
@@ -15,6 +16,9 @@ public:
 
     // Getters for system information
     double getCpuUsage() const;
+    double getTimeStep() const;
+    double getCpuUsageForCore(int core) const;
+    double getTimeStepForCore(int core) const;
     double getTotalRamMB() const;
     double getFreeRamMB() const;
     double getUsedRamMB() const;
@@ -31,14 +35,14 @@ private:
 
     void initCpuUsage(); // Initialize CPU usage
     void initNumCores(); // Private method to initialize the number of CPU cores
-    double calculatePercent(); //Calculate CPU usage percent
+    void setCpuUsageResult(); //Private method to set CPU Usage statistics using CpuUsageCalculator
 
     std::ifstream statFile_; // File stream for /proc/stat
     unsigned long long lastTotalUser_, lastTotalUserLow_, lastTotalSys_, lastTotalIdle_;
     std::string cpuLabel_;
     double uptime_, totalRam_, freeRam_, usedRam_, loadAvg1Min_, loadAvg5Min_, loadAvg15Min_;
-    double cpuUsagePercent_; // CPU usage percentage
     int numCores_; // Number of CPU cores
+    std::map<int, CpuUsageResult> coreUsageResults_; // Map to store CPU usage results for each core (total usage stored at -1)
 
     static SystemInfo* instance_; // Singleton instance
     static std::mutex mutex_; // Mutex for thread safety

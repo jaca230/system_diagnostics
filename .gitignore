@@ -30,6 +30,9 @@ Desktop.ini
 bin/
 build/
 
+# Ignore deprecated files
+deprecated/
+
 # Ignore dependency directories
 node_modules/
 vendor/
@@ -94,3 +97,4 @@ coverage/
 *.classpath
 *.project
 *.settings/
+
