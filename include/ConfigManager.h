@@ -43,6 +43,7 @@ private:
     void readConfigSection(const nlohmann::json& config, const std::string& configSectionName, T& target, const T& defaultValue);
     template<typename T>
     T getConfigValue(const nlohmann::json& config, const std::string& configPath, const T& defaultValue);
+    bool fileExists(const std::string& path);
 };
 
 #endif // CONFIG_MANAGER_H

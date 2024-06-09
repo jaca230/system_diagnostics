@@ -5,6 +5,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstdlib> // for getenv
+#include <string>
+#include <filesystem> // for filesystem utilities
+#include <sys/stat.h> // for stat
 
 using json = nlohmann::json;
 
@@ -80,21 +84,34 @@ void ConfigManager::setCpuUsageTimeAverageMs(int timeMs) {
 std::string ConfigManager::getConfigFilePath(const std::string& configFile) {
     std::string configFilePath;
 
-    // Determine the configuration file path
+    // Try to get the configuration file path from the environment variable
+    const char* envConfigFilePath = std::getenv("SYSTEM_MONITOR_CONFIG_FILE_PATH");
+    if (envConfigFilePath != nullptr) {
+        if (fileExists(envConfigFilePath)) {
+            configFilePath = envConfigFilePath;
+            return configFilePath;
+        }
+    }
+
+    // Check if the provided config file path exists
     if (!configFile.empty()) {
-        configFilePath = configFile;
-    } else {
-        std::string sourceDirectory = __FILE__;
-        size_t lastSlash = sourceDirectory.find_last_of('/');
+        if (fileExists(configFile)) {
+            configFilePath = configFile;
+            return configFilePath;
+        }
+    }
+
+    // Determine the configuration file path from the source directory
+    std::string sourceDirectory = __FILE__;
+    size_t lastSlash = sourceDirectory.find_last_of('/');
+    if (lastSlash != std::string::npos) {
+        sourceDirectory = sourceDirectory.substr(0, lastSlash);
+        lastSlash = sourceDirectory.find_last_of('/');
         if (lastSlash != std::string::npos) {
             sourceDirectory = sourceDirectory.substr(0, lastSlash);
-            lastSlash = sourceDirectory.find_last_of('/');
-            if (lastSlash != std::string::npos) {
-                sourceDirectory = sourceDirectory.substr(0, lastSlash);
-            }
         }
-        configFilePath = sourceDirectory + "/config/config.json";
     }
+    configFilePath = sourceDirectory + "/config/config.json";
 
     return configFilePath;
 }
@@ -136,4 +153,9 @@ T ConfigManager::getConfigValue(const nlohmann::json& config, const std::string&
         }
         return defaultValue;
     }
+}
+
+bool ConfigManager::fileExists(const std::string& path) {
+    struct stat buffer;
+    return (stat(path.c_str(), &buffer) == 0);
 }

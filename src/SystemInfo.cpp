@@ -133,6 +133,59 @@ int SystemInfo::getNumCores() const {
     return numCores_;
 }
 
+SystemInfoData SystemInfo::collectSystemInfo() {
+    SystemInfoData data;
+
+    // Update system information
+    this->updateSystemInfo();
+
+    // Populate data structure
+    data.total_ram = this->getTotalRam();
+    data.free_ram = this->getFreeRam();
+    data.total_ram_MB = this->getTotalRamMB();
+    data.free_ram_MB = this->getFreeRamMB();
+    data.cpu_usage_percent = this->getCpuUsage();
+    data.cpu_num_processors = this->getNumCores();
+    data.cpu_real_time_step = this->getTimeStep();
+
+    // Gather per-core data
+    data.cpu_usage_percent_per_core.resize(data.cpu_num_processors);
+    data.cpu_real_time_step_per_core.resize(data.cpu_num_processors);
+    for (int core = 0; core < data.cpu_num_processors; ++core) {
+        data.cpu_usage_percent_per_core[core] = this->getCpuUsageForCore(core);
+        data.cpu_real_time_step_per_core[core] = this->getTimeStepForCore(core);
+    }
+
+    // Load averages
+    data.load_avg_1min = this->getLoadAvg1Min();
+    data.load_avg_5min = this->getLoadAvg5Min();
+    data.load_avg_15min = this->getLoadAvg15Min();
+
+    return data;
+}
+
+std::vector<double> SystemInfo::packageSystemInfoForMIDAS() {
+    SystemInfoData data = this->collectSystemInfo();
+    std::vector<double> packagedData;
+
+    packagedData.push_back(static_cast<double>(0)); //Initialize with 0
+    packagedData.push_back(static_cast<double>(data.total_ram));
+    packagedData.push_back(static_cast<double>(data.free_ram));
+    packagedData.push_back(data.load_avg_1min);
+    packagedData.push_back(data.load_avg_5min);
+    packagedData.push_back(data.load_avg_15min);
+    packagedData.push_back(data.cpu_usage_percent);
+    packagedData.push_back(data.cpu_real_time_step);
+    packagedData.push_back(static_cast<double>(data.cpu_num_processors));
+    for (int core = 0; core < data.cpu_num_processors; ++core) {
+        packagedData.push_back(data.cpu_usage_percent_per_core[core]);
+        packagedData.push_back(data.cpu_real_time_step_per_core[core]);
+    }
+    packagedData[0] = static_cast<double>(packagedData.size()-1); 
+
+    return packagedData;
+}
+
 void SystemInfo::initNumCores() {
     // Read the number of CPU cores from /proc/cpuinfo
     int numCoresCpuInfo = 0;

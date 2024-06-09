@@ -5,7 +5,23 @@
 #include <chrono>
 #include <thread>
 #include <mutex>
+#include <vector>
 #include "CpuUsageCalculator.h"
+
+struct SystemInfoData {
+    long total_ram;
+    long free_ram;
+    long total_ram_MB;
+    long free_ram_MB;
+    double cpu_usage_percent;
+    int cpu_num_processors;
+    double cpu_real_time_step;
+    std::vector<double> cpu_usage_percent_per_core;
+    std::vector<double> cpu_real_time_step_per_core;
+    double load_avg_1min;
+    double load_avg_5min;
+    double load_avg_15min;
+};
 
 class SystemInfo {
 public:
@@ -29,6 +45,8 @@ public:
     double getLoadAvg5Min() const;
     double getLoadAvg15Min() const;
     int getNumCores() const;
+    SystemInfoData collectSystemInfo();
+    std::vector<double> packageSystemInfoForMIDAS();
 
 private:
     SystemInfo(); // Private constructor

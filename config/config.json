@@ -1,6 +1,6 @@
 {
     "debug": {
-        "verbosity": 4
+        "verbosity": 0
     },
     "printer": {
         "print_line_number": true,
@@ -15,6 +15,6 @@
         "buffer_size": 10000
     },
     "system_info": {
-        "cpu_usage_time_average_ms": 10000
+        "cpu_usage_time_average_ms": 1000
     }
 }
