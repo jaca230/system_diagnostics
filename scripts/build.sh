@@ -47,7 +47,7 @@ user_dir=$(get_calling_directory)
 source "$script_directory/setup_env.sh"
 
 # Build directory path
-build_directory="$script_directory/../build"
+build_directory=$(realpath "$script_directory/../build")
 
 # Remove the build directory if --overwrite flag is set
 if $overwrite && [ -d "$build_directory" ]; then

@@ -19,7 +19,7 @@ if ! is_sourced_script; then
 fi
 
 # Define the bin directory relative to the script directory
-bin_directory="$script_directory/../bin"
+bin_directory=$(realpath "$script_directory/../bin")
 
 # Add the bin directory to PATH if it's not already included
 if ! is_in_path "$bin_directory"; then
@@ -27,4 +27,23 @@ if ! is_in_path "$bin_directory"; then
     echo "Added $bin_directory to PATH."
 else
     echo "$bin_directory is already in PATH."
+fi
+
+# Source the environment configuration file
+config_file="$script_directory/config/env_config.sh"
+if [[ -f "$config_file" ]]; then
+    source "$config_file"
+    echo "Sourced environment configuration file: $config_file"
+else
+    echo "Configuration file not found: $config_file"
+    return 1
+fi
+
+# Convert the SYSTEM_MONITOR_CONFIG_FILE_PATH to an absolute path
+if [[ -n "$SYSTEM_MONITOR_CONFIG_FILE_PATH" ]]; then
+    export SYSTEM_MONITOR_CONFIG_FILE_PATH=$(realpath "$SYSTEM_MONITOR_CONFIG_FILE_PATH")
+    echo "SYSTEM_MONITOR_CONFIG_FILE_PATH set to: $SYSTEM_MONITOR_CONFIG_FILE_PATH"
+else
+    echo "SYSTEM_MONITOR_CONFIG_FILE_PATH is not set in the configuration file."
+    return 1
 fi
