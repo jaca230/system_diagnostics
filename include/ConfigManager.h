@@ -20,7 +20,7 @@ public:
     const json& getConfig() const;
 
 private:
-    bool debug = true; // Internal debug flag for config loading
+    bool debug = false; // Internal debug flag for config loading
 
     static ConfigManager* instance;
     json config;
