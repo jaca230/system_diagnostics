@@ -19,7 +19,7 @@
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/system_diagnostics.git
+    git clone https://github.com/jaca230/system_diagnostics.git
     cd system_diagnostics
     ```
 
