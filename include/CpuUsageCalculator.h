@@ -2,8 +2,9 @@
 #define CPU_USAGE_CALCULATOR_H
 
 #include <deque>
-#include <chrono>
 #include <mutex>
+#include <vector>
+#include <limits> // For std::numeric_limits
 #include <map>
 
 struct DataPoint {
@@ -11,48 +12,41 @@ struct DataPoint {
     unsigned long long totalUserLow;
     unsigned long long totalSys;
     unsigned long long totalIdle;
-    std::chrono::system_clock::time_point timestamp;
+    unsigned long long jiffies;
 };
 
 struct CpuUsageResult {
     double usagePercent;
-    double timeDiffSeconds;
+    unsigned long long jiffiesPassed;
 };
 
 class CpuUsageCalculator {
 public:
     static CpuUsageCalculator& getInstanceForCore(int core);
     static CpuUsageCalculator& getInstanceForTotal();
-    // Public constant for the total CPU index (generally -1)
     static const int TOTAL_CPU_USAGE_INDEX;
 
     void addDataPointForCore(int core, unsigned long long totalUser, unsigned long long totalUserLow,
-                              unsigned long long totalSys, unsigned long long totalIdle);
-    void addDataPointForCore(int core, unsigned long long totalUser, unsigned long long totalUserLow,
-                              unsigned long long totalSys, unsigned long long totalIdle,
-                              std::chrono::system_clock::time_point timestamp);
+                              unsigned long long totalSys, unsigned long long totalIdle, unsigned long long jiffies);
     CpuUsageResult calculateCpuUsagePercentForCore(int core, size_t index1, size_t index2) const;
-    CpuUsageResult calculateCpuUsagePercentForCore(int core, std::chrono::milliseconds durationAgo) const;
-    CpuUsageResult calculateCpuUsagePercentForCore(int core, std::chrono::milliseconds durationAgo1, std::chrono::milliseconds durationAgo2) const;
+    CpuUsageResult calculateCpuUsagePercentForCore(int core) const;
     void addDataPointForTotal(unsigned long long totalUser, unsigned long long totalUserLow,
-                              unsigned long long totalSys, unsigned long long totalIdle);
-    void addDataPointForTotal(unsigned long long totalUser, unsigned long long totalUserLow,
-                              unsigned long long totalSys, unsigned long long totalIdle,
-                              std::chrono::system_clock::time_point timestamp);
+                              unsigned long long totalSys, unsigned long long totalIdle, unsigned long long jiffies);
     CpuUsageResult calculateCpuUsagePercentForTotal(size_t index1, size_t index2) const;
-    CpuUsageResult calculateCpuUsagePercentForTotal(std::chrono::milliseconds durationAgo) const;
-    CpuUsageResult calculateCpuUsagePercentForTotal(std::chrono::milliseconds durationAgo1, std::chrono::milliseconds durationAgo2) const;
+    CpuUsageResult calculateCpuUsagePercentForTotal() const;
 
 private:
     CpuUsageCalculator();
     ~CpuUsageCalculator();
 
-    size_t findClosestIndexForCore(int core, std::chrono::milliseconds durationAgo) const;
-
     static std::map<int, CpuUsageCalculator*> coreInstances_;
     static std::mutex mutex_;
     size_t bufferSize_;
-    std::deque<DataPoint> buffer_;
+    std::vector<DataPoint> buffer_;
+    size_t currentIndex_;
+    size_t largestOccupiedIndex_;
+
+    size_t getWrappedIndex(size_t index) const;
 };
 
 #endif // CPU_USAGE_CALCULATOR_H

@@ -11,10 +11,9 @@
         "warning_color": "yellow",
         "error_color": "red"
     },
-    "cpu_usage_calculator": {
-        "buffer_size": 10000
-    },
     "system_info": {
-        "cpu_usage_time_average_ms": 1000
+        "NOTE": "A jiffy is a unit defined by your system, usually 10 ms. See `getconf CLK_TCK` for the rate in Hz.",
+        "update_period_jiffies": 20,
+        "average_period_jiffies": 100
     }
 }

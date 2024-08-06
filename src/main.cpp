@@ -16,11 +16,9 @@ void printHelp() {
 }
 
 void parseCommandLineArgs(int argc, char* argv[], int& iterations, int& delayMilliseconds) {
-    // Default values
     iterations = 10;
     delayMilliseconds = 100;
 
-    // Parse command-line arguments
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "-i") == 0 || std::strcmp(argv[i], "--iterations") == 0) {
             if (i + 1 < argc) {
@@ -53,55 +51,41 @@ int main(int argc, char* argv[]) {
     
     parseCommandLineArgs(argc, argv, iterations, delayMilliseconds);
 
-    /*
-    This should be written in a way that the config
-
-    // Create an instance of ConfigManager to read the configuration file
-    ConfigManager& configManager = ConfigManager::getInstance();
-    */
-
     // Get instance of Printer
     Printer& printer = Printer::getInstance(); 
-    // Create an instance of SystemInfo
-    SystemInfo& systemInfo = SystemInfo::getInstance();
 
+    // Create and start SystemInfo instance
+    SystemInfo& systemInfo = SystemInfo::getInstance();
+    systemInfo.startPeriodicUpdates();
+
+    
     for (int i = 0; i < iterations; ++i) {
         printer.print("-------------------------------");
         printer.print("Iteration #" + std::to_string(i+1));
         printer.print("-------------------------------");
-        // Update CPU information
-        systemInfo.updateSystemInfo();
 
-        // Get total RAM, free RAM, and CPU usage percentage
-        long total_ram = systemInfo.getTotalRam();
-        long free_ram = systemInfo.getFreeRam();
-        long total_ram_MB = systemInfo.getTotalRamMB();
-        long free_ram_MB = systemInfo.getFreeRamMB();
-        double cpu_usage_percent = systemInfo.getCpuUsage();
-        int cpu_num_processors = systemInfo.getNumCores();
-        double cpu_real_time_step = systemInfo.getTimeStep();
+        // Collect system information
+        SystemInfoData data = systemInfo.collectSystemInfo();
 
-        // Print total RAM, free RAM, and CPU usage
-        printer.print("Total RAM: " + std::to_string(total_ram) + " B");
-        printer.print("Free RAM: " + std::to_string(free_ram) + " B");
-        printer.print("Total RAM (MB): " + std::to_string(total_ram_MB) + " MB");
-        printer.print("Free RAM (MB): " + std::to_string(free_ram_MB) + " MB");
-        printer.print("Total CPU Usage: " + std::to_string(cpu_usage_percent) + "%");
-        printer.print("Time step for CPU Usage: " + std::to_string(cpu_real_time_step) + "s");
-        printer.print("Number of CPU Proccessors: " + std::to_string(cpu_num_processors));
-        for (int core = 0; core < cpu_num_processors; ++core) {
-            double cpu_usage_percent_core = systemInfo.getCpuUsageForCore(core);
-            double cpu_real_time_step_core = systemInfo.getTimeStepForCore(core);
-            printer.print("CPU Core " + std::to_string(core) + " Usage: " + std::to_string(cpu_usage_percent_core) + "%");
-            printer.print("CPU Core " + std::to_string(core) + " Time step: " + std::to_string(cpu_real_time_step_core) + "s");
+        // Print system information
+        printer.print("Total RAM: " + std::to_string(data.total_ram) + " B");
+        printer.print("Free RAM: " + std::to_string(data.free_ram) + " B");
+        printer.print("Total RAM (MB): " + std::to_string(data.total_ram_MB) + " MB");
+        printer.print("Free RAM (MB): " + std::to_string(data.free_ram_MB) + " MB");
+        printer.print("Total CPU Usage: " + std::to_string(data.cpu_usage_percent) + "%");
+        printer.print("Time step for CPU Usage: " + std::to_string(data.cpu_real_time_step) + "s");
+        printer.print("Number of CPU Processors: " + std::to_string(data.cpu_num_processors));
+        
+        for (int core = 0; core < data.cpu_num_processors; ++core) {
+            printer.print("CPU Core " + std::to_string(core) + " Usage: " + std::to_string(data.cpu_usage_percent_per_core[core]) + "%");
+            printer.print("CPU Core " + std::to_string(core) + " Time step: " + std::to_string(data.cpu_real_time_step_per_core[core]) + "s");
         }
 
-        // Print load averages for 1 min, 5 min, and 15 min
-        std::string load_avg_msg = "Load Average (1 min, 5 min, 15 min): ";
-        load_avg_msg += std::to_string(systemInfo.getLoadAvg1Min()) + " ";
-        load_avg_msg += std::to_string(systemInfo.getLoadAvg5Min()) + " ";
-        load_avg_msg += std::to_string(systemInfo.getLoadAvg15Min());
-        printer.print(load_avg_msg);
+        // Print load averages
+        printer.print("Load Average (1 min, 5 min, 15 min): " +
+                      std::to_string(data.load_avg_1min) + " " +
+                      std::to_string(data.load_avg_5min) + " " +
+                      std::to_string(data.load_avg_15min));
 
         // Package system information for MIDAS
         std::vector<double> systemInfoData = systemInfo.packageSystemInfoForMIDAS();
@@ -113,6 +97,7 @@ int main(int argc, char* argv[]) {
         // Delay before the next iteration
         std::this_thread::sleep_for(std::chrono::milliseconds(delayMilliseconds));
     }
+
 
     return 0;
 }

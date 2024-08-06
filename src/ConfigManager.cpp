@@ -44,16 +44,16 @@ int ConfigManager::getVerbosity() const {
     return verbosity;
 }
 
-int ConfigManager::getCpuUsageCalculatorBufferSize() const {
-    return cpuUsageCalculatorBufferSize;
-}
-
-int ConfigManager::getCpuUsageTimeAverageMs() const {
-    return cpuUsageTimeAverageMs;
-}
-
 const json& ConfigManager::getConfig() const {
     return config;
+}
+
+int ConfigManager::getAveragePeriodJiffies() const {
+    return averagePeriodJiffies;
+}
+
+int ConfigManager::getUpdatePeriodJiffies() const {
+    return updatePeriodJiffies;
 }
 
 
@@ -65,20 +65,20 @@ void ConfigManager::setVerbosity(int newVerbosity) {
     config["debug"]["verbosity"] = newVerbosity;
 }
 
-void ConfigManager::setCpuUsageCalculatorBufferSize(int newSize) {
-    if (!config.contains("cpu_usage_calculator")) {
-        config["cpu_usage_calculator"] = json::object();
+void ConfigManager::setAveragePeriodJiffies(int averagePeriod) {
+    if (!config.contains("system_info")) {
+        config["average_period_jiffies"] = json::object();
     }
-    cpuUsageCalculatorBufferSize = newSize;
-    config["cpu_usage_calculator"]["buffer_size"] = newSize;
+    averagePeriodJiffies = averagePeriod;
+    config["system_info"]["average_period_jiffies"] = averagePeriod;
 }
 
-void ConfigManager::setCpuUsageTimeAverageMs(int timeMs) {
+void ConfigManager::setUpdatePeriodJiffies(int updatePeriod) {
     if (!config.contains("system_info")) {
-        config["cpu_usage_time_average_ms"] = json::object();
+        config["update_period_jiffies"] = json::object();
     }
-    cpuUsageTimeAverageMs = timeMs;
-    config["system_info"]["cpu_usage_time_average_ms"] = timeMs;
+    updatePeriodJiffies = updatePeriod;
+    config["system_info"]["update_period_jiffies"] = updatePeriod;
 }
 
 std::string ConfigManager::getConfigFilePath(const std::string& configFile) {
@@ -118,8 +118,8 @@ std::string ConfigManager::getConfigFilePath(const std::string& configFile) {
 
 void ConfigManager::readConfig(const nlohmann::json& config) {
     readConfigSection(config, "debug.verbosity", verbosity, DEFAULT_VERBOSITY);
-    readConfigSection(config, "cpu_usage_calculator.buffer_size", cpuUsageCalculatorBufferSize, DEFAULT_CPU_CALCULATOR_BUFFER_SIZE);
-    readConfigSection(config, "system_info.cpu_usage_time_average_ms", cpuUsageTimeAverageMs, DEFAULT_CPU_USEAGE_TIME_AVERAGE_MS);
+    readConfigSection(config, "system_info.update_period_jiffies", updatePeriodJiffies, DEFAULT_UPDATE_PERIOD_JIFFIES);
+    readConfigSection(config, "system_info.average_period_jiffies", averagePeriodJiffies, DEFAULT_AVERAGE_PERIOD_JIFFIES);
 
 }
 

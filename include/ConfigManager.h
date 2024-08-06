@@ -12,11 +12,11 @@ public:
 
     static ConfigManager& getInstance(const std::string& configFile = "");
     int getVerbosity() const;
-    int getCpuUsageCalculatorBufferSize() const;
-    int getCpuUsageTimeAverageMs() const;
+    int getUpdatePeriodJiffies() const;
+    int getAveragePeriodJiffies() const;
     void setVerbosity(int verbosity);
-    void setCpuUsageCalculatorBufferSize(int bufferSize);
-    void setCpuUsageTimeAverageMs(int timeMs);
+    void setUpdatePeriodJiffies(int updatePeriod);
+    void setAveragePeriodJiffies(int averagePeriod);
     const json& getConfig() const;
 
 private:
@@ -25,13 +25,13 @@ private:
     static ConfigManager* instance;
     json config;
     int verbosity;
-    int cpuUsageCalculatorBufferSize;
-    int cpuUsageTimeAverageMs;
+    int updatePeriodJiffies;
+    int averagePeriodJiffies;
 
     // Default values
     const int DEFAULT_VERBOSITY = 0;
-    const int DEFAULT_CPU_CALCULATOR_BUFFER_SIZE = 10000;
-    const int DEFAULT_CPU_USEAGE_TIME_AVERAGE_MS = 1000;
+    const int DEFAULT_UPDATE_PERIOD_JIFFIES = 100;
+    const int DEFAULT_AVERAGE_PERIOD_JIFFIES = 1000;
 
     //Methods
     ConfigManager(const std::string& configFile);

@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.0)
 
 project(system_diagnostics)
 
+# Set the C++ standard to C++11 (or newer)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Define source directory (adjust if needed)
 set(SOURCE_DIR src)
 
@@ -30,8 +34,8 @@ set_target_properties(system_diagnostics_lib PROPERTIES
 file(GLOB EXECUTABLE_SOURCE_FILES ${SOURCE_DIR}/*.cpp)
 add_executable(system_diagnostics ${EXECUTABLE_SOURCE_FILES})
 
-# Link the executable with the library
-target_link_libraries(system_diagnostics PRIVATE system_diagnostics_lib)
+# Link the executable with the library and pthread
+target_link_libraries(system_diagnostics PRIVATE system_diagnostics_lib pthread)
 
 # Set the installation directory to the parent directory
 set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}")
