@@ -38,8 +38,6 @@ SystemInfo::SystemInfo() {
 void SystemInfo::startPeriodicUpdates() {
     //Stop any running threads.
     stopPeriodicUpdates();
-    // Ensure only one thread is started
-    std::cout << running_<< std::endl;
     if (running_) {
         return;
     }
